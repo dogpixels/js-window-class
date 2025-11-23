@@ -1,0 +1,10 @@
+{
+    "guestboard": "pages/guestboard.html",
+    "mastodon":  "pages/ext.mastodon.html",
+    "resizetest": "pages/hello2.php",
+
+    "2023-ipsilone": "pages/win-img.html#img/gallery/2023_draconigen_study_commission_by_i-psilone.jpg",
+    "test2": "pages/win-img.html#img/gallery/2023_draconigen_study_commission_by_i-psilone.jpg",
+    "2024-fellfallow": "pages/win-img.html#img/gallery/2024_Flam_and_Vinaru_by_Fellfallow.jpg",
+    "test": "pages/win-img.html#img/gallery/2024_Flam_and_Vinaru_by_Fellfallow.jpg"
+}
