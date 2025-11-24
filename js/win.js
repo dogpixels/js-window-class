@@ -104,8 +104,10 @@ class Window {
         };
 
         // Store initial window size for later use in resizeToContent()
-        if (options.hasOwnProperty('width')) this.#initialDim.w = options.width;
-        if (options.hasOwnProperty('height')) this.#initialDim.h = options.height;
+        if (options.hasOwnProperty('width'))
+            this.#initialDim.w = Math.max(options.width, this.#css.minWinWidth);
+        if (options.hasOwnProperty('height'))
+            this.#initialDim.h = Math.max(options.height, this.#css.titleHeight);
 
         // merge passed options, of which some are optional, with sensible defaults
         const defaults = { title: 'loading…', width: 640, height: 480, x: 20, y: 20 };
