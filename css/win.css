@@ -8,6 +8,7 @@
     --win-title-height: 20px;
     --win-border-width: 3px;
 }
+
 body.window-drag-active .window iframe {
     pointer-events: none;
 }
@@ -30,6 +31,7 @@ body.window-drag-active .window iframe {
     width: calc(100% - var(--win-title-height) - var(--win-border-width));
     margin: 0;
     padding: 0 var(--win-border-width);
+    white-space: nowrap;
     overflow: hidden;
     font-size: 12pt;
     font-weight: normal;
