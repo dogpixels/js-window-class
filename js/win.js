@@ -85,7 +85,7 @@ class Window {
      *  y {number}: windows vertical position within its parent container ("desktop"), defaults to 20
      * } 
      */
-    constructor(key, options) {
+    constructor(key, options = {}) {
         this.#key = key;
 
         // get parent element to attach window in
