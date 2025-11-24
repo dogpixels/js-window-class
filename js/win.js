@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.0
+ * @version 1.1
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -63,6 +63,9 @@ class Window {
 
     /** @type {object} width and hight values initially passed on window creation, if provided */
     #initialDim = {w: null, h: null};
+    
+    /** @type {boolean} true if window had been restored from Save Data (location hash), false otherwise */
+    #restoredFromSaveData = false;
 
     /** @type {Object}  */
     static mouseEvent = { target: null, type: null, direction: null }
@@ -108,10 +111,13 @@ class Window {
             this.#initialDim.w = Math.max(options.width, this.#css.minWinWidth);
         if (options.hasOwnProperty('height'))
             this.#initialDim.h = Math.max(options.height, this.#css.titleHeight);
-
+        
         // merge passed options, of which some are optional, with sensible defaults
         const defaults = { title: 'loading…', width: 640, height: 480, x: 20, y: 20 };
         options = { ...defaults, ...options, ...{url: Window.registry[key]} };
+
+        if (options.private?.hasOwnProperty('restoredFromSaveData'))
+            this.#restoredFromSaveData = options.private.restoredFromSaveData;
 
         // retrieve target iframe url for this window from a static registry (this is for security reasons)
         if (options.url === undefined) {
@@ -357,6 +363,10 @@ class Window {
      * @param {number} contentH 
      */
     resizeToContent(contentW, contentH) {
+        // prevent further resizing on windows restored from Save Data (location hash)
+        if (this.#restoredFromSaveData)
+            return;
+
         const addW = 2 * this.#css.borderWidth;
         const addH = 2 * this.#css.borderWidth + this.#css.titleHeight;
 
@@ -581,12 +591,12 @@ class Window {
                 if (!Window.registry[data[0]])
                     return; // drop unregistered windows from save data
                 new Window(data[0], {
-                    // title: Window.registry[data[0]].title,
                     width: parseInt(data[1]),
                     height: parseInt(data[2]),
                     x: parseInt(data[3]),
                     y: parseInt(data[4]),
-                    z: parseInt(data[5])
+                    z: parseInt(data[5]),
+                    private: {restoredFromSaveData: true}
                 });
             });
         }
