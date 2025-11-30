@@ -169,8 +169,7 @@ class Window {
         this.html.appendChild(cb);
         cb.classList.add('window-close-button');
         cb.addEventListener('click', () => {
-            this.html.remove();
-            Window.windowList.splice(Window.windowList.indexOf(this), 1);
+            this.close();
         });
 
         // content iframe
@@ -497,6 +496,14 @@ class Window {
         this.html.style.top = `${y}px`;
         this.html.style.width = `${w}px`;
         this.html.style.height = `${h}px`;
+    }
+
+    /**
+     * Close this window.
+     */
+    close() {
+        this.html.remove();
+        Window.windowList.splice(Window.windowList.indexOf(this), 1);
     }
 
     /**
