@@ -37,6 +37,7 @@ const WINDOWS_404_ERROR_FILE = 'pages/win-404.html';
  * Window class
  * Represents an iframe-powered window with drag'n'drop functionality.
  * 
+ * @property {string} key - Unique window key, must match a key in WINDOWS_REGISTRY_FILE.
  * @property {Element} html - The HTML Element this object represents.
  */
 class Window {
@@ -89,7 +90,7 @@ class Window {
      * } 
      */
     constructor(key, options = {}) {
-        this.#key = key;
+        this.key = key;
 
         // get parent element to attach window in
         const parentElement = document.getElementById(WINDOWS_PARENT_ELEMENT_ID);
@@ -526,7 +527,7 @@ class Window {
     static getSavaData() {
         let r = [];
         Window.windowList.forEach(win => {
-            r.push(`${win.#key},${win.html.offsetWidth},${win.html.offsetHeight},${win.html.offsetLeft},${win.html.offsetTop},${win.html.style.zIndex}`);
+            r.push(`${win.key},${win.html.offsetWidth},${win.html.offsetHeight},${win.html.offsetLeft},${win.html.offsetTop},${win.html.style.zIndex}`);
         });
         return r.join(';');
     }
