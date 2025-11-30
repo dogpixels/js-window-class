@@ -44,9 +44,6 @@ class Window {
     /** @type {Object} parsed integer values of --win-min-width, --win-title-height and --win-border-width from CSS */
     #css = {minWinWidth: 0, borderWidth: 0, titleHeight: 0};
 
-    /** @type {string} unique window key, must match a key in WINDOWS_REGISTRY_FILE */
-    #key = null; // your IDE might be lying, this var IS being used
-
     /** @type {Object} mouse and window positions and dimensions at the moment of a mousedown event */
     #mdown = {mx: 0, my: 0, x: 0, y: 0, w: 0, h: 0};
 
