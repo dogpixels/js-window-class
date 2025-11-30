@@ -105,6 +105,22 @@ This opens `pages/win-img.html` in your iframe and passes the image path as a pa
 
 > Troubleshooting: Should using this file fail due to pathing errors, check `basepath` configuration on line 15 within.
 
+## Events
+
+##### windows:initialized
+
+Fires if and when restoring windows from Save Data (location hash) has succeeded. The `detail` event attribute contains an array of restored windows.
+
+Listener example:
+
+```javascript
+window.addEventListener('windows:initialized', (e) => {
+   console.log("windows loaded from Save Data; the windows: ", e.detail);
+});
+```
+
+> Note: the `window` in `window.addEventListener()` above refers to your [browser's DOM window](https://developer.mozilla.org/en-US/docs/Web/API/Window), that has nothing to do with this "Window" class at hand.
+
 ## Attributions
 
 Thank you to Mijira for clearing up my confusions regarding proper window resizing. <3
