@@ -1,5 +1,6 @@
 {
-    "example-home": "pages/home.html",
-    "example-config-error":  "pages/win-404.html",
-    "example-imageviewer-test": "pages/win-img.html#path/to/my/image.jpg"
+    "welcome": "pages/welcome.html",
+    "about": "pages/aboutme.html",
+    "self-portrait": "img/portrait.jpg",
+    "my-first-artwork": "pages/win-img.html#img/first_artwork.jpg"
 }
