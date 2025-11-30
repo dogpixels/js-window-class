@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.1
+ * @version 1.2
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -32,6 +32,19 @@ const WINDOWS_REGISTRY_FILE = 'config/win-urls.json';
  * @type {string}
  */
 const WINDOWS_404_ERROR_FILE = 'pages/win-404.html';
+
+/**
+ * @event windows:initialized
+ * @type {CustomEvent<Array<Window>}
+ * Fired if and after Windows have been restored from Save Data (location hash).
+ * CustomEvent.etail contains an array of initialized windows.
+ * 
+ * Listener example:
+ * 
+ * window.addEventListener('windows:initialized', (e) => {
+ *    console.log("windows loaded from Save Data; the windows: ", e.detail);
+ * });
+ */
 
 /**
  * Window class
@@ -568,6 +581,7 @@ class Window {
      * > Note: This function needs to be run only once at initialization. If setup succeeded,
      * > subsequently running this function will simply return true without doing anything.
      * 
+     * @fires windows:initialized
      * @returns {boolean} true on setup success, false otherwise
      */
     static async initWindows() {
@@ -591,19 +605,21 @@ class Window {
         // load windows from save data stored within the browser's window location hash
         // data format: key,width,height,x,y,z
         if (window.location.hash) {
+            let w = [];
             window.location.hash.substring(1).split(';').forEach(item => {
                 let data = item.split(',');
                 if (!Window.registry[data[0]])
                     return; // drop unregistered windows from save data
-                new Window(data[0], {
+                w.push(new Window(data[0], {
                     width: parseInt(data[1]),
                     height: parseInt(data[2]),
                     x: parseInt(data[3]),
                     y: parseInt(data[4]),
                     z: parseInt(data[5]),
                     private: {restoredFromSaveData: true}
-                });
+                }));
             });
+            window.dispatchEvent(new CustomEvent('windows:initialized', {detail: w}));
         }
 
         return true;
