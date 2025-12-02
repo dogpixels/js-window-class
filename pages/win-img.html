@@ -23,16 +23,16 @@
                 // request window to adjust size to image size
                 img.onload = () => {
                     parent.postMessage({
-                        action: "resize",
+                        action: 'resize',
                         // Math.min(x, naturalX) supposed to prevent overstretching img
                         width: Math.min(img.width, img.naturalWidth),
                         height: Math.min(img.height, img.naturalHeight)
-                    }, "*");
+                    }, '*');
                 };
             }
             else {
-                document.body.innerText = "(╯°□°）╯︵ ┻━┻";
-                document.title = "NO IMAGE";
+                document.body.innerText = '(╯°□°）╯︵ ┻━┻';
+                document.title = 'NO IMAGE';
             }
         </script>
     </body>
