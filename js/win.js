@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.2
+ * @version 1.3
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -619,9 +619,9 @@ class Window {
                     private: {restoredFromSaveData: true}
                 }));
             });
-            window.dispatchEvent(new CustomEvent('windows:initialized', {detail: w}));
         }
 
+        window.dispatchEvent(new CustomEvent('windows:initialized', {detail: w}));
         return true;
     }
 }
