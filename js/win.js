@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.3
+ * @version 1.4
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -604,13 +604,13 @@ class Window {
 
         // load windows from save data stored within the browser's window location hash
         // data format: key,width,height,x,y,z
+        let restored_windows = [];
         if (window.location.hash) {
-            let w = [];
             window.location.hash.substring(1).split(';').forEach(item => {
                 let data = item.split(',');
                 if (!Window.registry[data[0]])
                     return; // drop unregistered windows from save data
-                w.push(new Window(data[0], {
+                restored_windows.push(new Window(data[0], {
                     width: parseInt(data[1]),
                     height: parseInt(data[2]),
                     x: parseInt(data[3]),
@@ -621,7 +621,7 @@ class Window {
             });
         }
 
-        window.dispatchEvent(new CustomEvent('windows:initialized', {detail: w}));
+        window.dispatchEvent(new CustomEvent('windows:initialized', {detail: restored_windows}));
         return true;
     }
 }
