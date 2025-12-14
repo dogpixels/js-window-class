@@ -8,6 +8,12 @@
     --win-title-height: 20px;
     --win-border-width: 3px;
 }
+/* mobile compatibility */
+@media (max-width: 640px) {
+    :root {
+        --win-title-height: 40px;
+    }
+}
 
 body.window-drag-active .window iframe {
     pointer-events: none;
