@@ -5,13 +5,13 @@
     --win-background: #ccc;
     /* the following variables are also read by window.js */
     --win-min-width: 200px;
-    --win-title-height: 20px;
+    --win-title-height: 1.33rem;
     --win-border-width: 3px;
 }
 /* mobile compatibility */
 @media (max-width: 640px) {
     :root {
-        --win-title-height: 40px;
+        --win-title-height: 2.66rem;
     }
 }
 
@@ -33,7 +33,7 @@ body.window-drag-active .window iframe {
 }
 .window-title-bar h1 {
     position: relative;
-    top: -1px;
+    top: calc(50% - .75rem + 1px);
     width: calc(100% - var(--win-title-height) - var(--win-border-width));
     margin: 0;
     padding: 0 var(--win-border-width);
