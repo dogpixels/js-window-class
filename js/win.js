@@ -141,6 +141,7 @@ class Window {
             options.x = 0;
             options.y = 0;
             options.width = 65535;
+            options.height = 65535;
         }
 
         // window element
