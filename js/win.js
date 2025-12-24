@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.4
+ * @version 1.5
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -110,11 +110,12 @@ class Window {
         }
 
         // save css-defined styles for later use
-        const cs = window.getComputedStyle(document.body);
+        const cs0 = window.getComputedStyle(document.body);
+        const cs1 = window.getComputedStyle(document.getElementById('window-property-convert'));
         this.#css = {
-            minWinWidth: parseInt(cs.getPropertyValue('--win-min-width')),
-            borderWidth: parseInt(cs.getPropertyValue('--win-border-width')),
-            titleHeight: parseInt(cs.getPropertyValue('--win-title-height'))
+            minWinWidth: parseFloat(cs0.getPropertyValue('--win-min-width')),
+            borderWidth: parseFloat(cs1.width),
+            titleHeight: parseFloat(cs1.height)
         };
 
         // Store initial window size for later use in resizeToContent()

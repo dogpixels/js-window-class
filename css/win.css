@@ -15,6 +15,19 @@
     }
 }
 
+/* getComputedStyle() used on :root would
+return unresolved relative (em, rem, %, ...)
+property values, so applying :root variables
+to an element and reading those instead
+gives us the desired properties in px. */
+#window-property-convert {
+    position: fixed;
+    top: 999vh;
+    left: 999vw;
+    height: var(--win-title-height);
+    width: var(--win-border-width);
+}
+
 body.window-drag-active .window iframe {
     pointer-events: none;
 }
