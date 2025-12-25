@@ -41,11 +41,19 @@ That's it. Don't forget to configure `config/win-urls.json` and adjust any paths
 
 ## Usage
 
-To create a window, call it via javascript:
+To create a window, send a message from anywhere within your website, including a sub-page that has been opened in a window already:
+
+```html
+<a href="#" onclick="parent.postMessage({action: 'window', key: 'key', x: 20, y: 20, width: 640, height: 480}, '*')">click me</a>
+```
+
+You can also call a Window constructor directly, but naturally only from a file you have loaded `win[.min].js`:
 
 ```html
 <a href="#" onclick="new Window('key', {x: 20, y: 20, width: 640, height: 480})">click me</a>
 ```
+
+> Note: the `postMessage()` way does not require you to include `win.min.js` in the same document.
 
 The `key` must exist in your `config/win-urls.json`. All options within the second parameter are optional.
 
