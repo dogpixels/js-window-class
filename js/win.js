@@ -546,7 +546,7 @@ class Window {
      * 
      * @returns {string} Window save data.
      */
-    static getSavaData() {
+    static getSaveData() {
         let r = [];
         Window.windowList.forEach(win => {
             r.push(`${win.key},${win.html.offsetWidth},${win.html.offsetHeight},${win.html.offsetLeft},${win.html.offsetTop},${win.html.style.zIndex}`);
