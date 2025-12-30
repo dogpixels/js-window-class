@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.5
+ * @version 1.6
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -86,6 +86,9 @@ class Window {
 
     /** @type {Array.Window} array of all Window objects on the viewport */
     static windowList = [];
+    
+    /** @type {string} the last saveData written to window history, to check against for changes */
+    static lastSaveData = '';
 
     /**
      * 
@@ -681,5 +684,9 @@ window.addEventListener('message', (e) => {
 
 // set up location with window save data update interval
 setInterval(() => {
-    history.replaceState(undefined, undefined, `#${Window.getSavaData()}`);
+    const current = Window.getSaveData();
+    if (current != Window.lastSaveData) {
+        history.replaceState(undefined, undefined, `#${current}`);
+        Window.lastSaveData = current;
+    }
 }, 500);
