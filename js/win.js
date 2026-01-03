@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.7.1
+ * @version 1.8
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -694,6 +694,10 @@ window.addEventListener('message', (e) => {
         // this comes from win-img.html as it reports back the image dimensions
         case 'resize':
             Window.findByUrl(e.source.location.href)?.resizeToContent(e.data.width, e.data.height);
+            break;
+
+        case 'center':
+            Window.findByUrl(e.source.location.href)?.centerToDesktop();
             break;
     }
 });
