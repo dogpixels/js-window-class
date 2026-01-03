@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.7
+ * @version 1.7.1
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -147,7 +147,7 @@ class Window {
         }
 
         // override x, y and width to fullscreen on mobile screens
-        if (FULLSCREEN_THRESHOLD > 0 && parentElement.clientWidth <= FULLSCREEN_THRESHOLD) {
+        if (!this.#restoredFromSaveData && FULLSCREEN_THRESHOLD > 0 && parentElement.clientWidth <= FULLSCREEN_THRESHOLD) {
             options.x = 0;
             options.y = 0;
             options.width = 65535;
