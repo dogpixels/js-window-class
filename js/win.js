@@ -14,7 +14,7 @@ const OPEN_IN_NEW_TAB_BUTTON = false;
 
 /**
  * On screens lower than this width, x, y and width declarations will be ignored and the window stretched across the full width.
- * 0 disables this behaviour altogether.
+ * 0 disables this behavior altogether.
  * @type {number}
  */
 const FULLSCREEN_THRESHOLD = 640;
@@ -43,7 +43,7 @@ const WINDOWS_404_ERROR_FILE = 'pages/win-404.html';
  * @event windows:initialized
  * @type {CustomEvent<Array<Window>}
  * Fired if and after Windows have been restored from Save Data (location hash).
- * CustomEvent.etail contains an array of initialized windows.
+ * CustomEvent.detail contains an array of initialized windows.
  * 
  * Listener example:
  * 
