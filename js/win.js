@@ -1,10 +1,16 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.6
+ * @version 1.7
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
  */
+
+/**
+ * Show a button in the title bar that opens the target iframe url in a new tab. Good for refreshing contents during development.
+ * @type {boolean}
+ */
+const OPEN_IN_NEW_TAB_BUTTON = false;
 
 /**
  * On screens lower than this width, x, y and width declarations will be ignored and the window stretched across the full width.
@@ -186,6 +192,16 @@ class Window {
         cb.addEventListener('click', () => {
             this.close();
         });
+        
+        if (OPEN_IN_NEW_TAB_BUTTON) {
+            // open iframe target in new tab button
+            const ntb = document.createElement('div');
+            this.html.appendChild(ntb);
+            ntb.classList.add('window-new-tab-button');
+            ntb.addEventListener('click', () => {
+                window.open(options.url, '_blank');
+            });
+        }
 
         // content iframe
         this.#iframe = document.createElement('iframe');
