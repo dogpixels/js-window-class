@@ -382,6 +382,16 @@ class Window {
         this.html.style.height = `${h}px`;
     }
 
+    maximize() {
+        if (this.#restoredFromSaveData)
+            return;
+
+        this.html.style.left = '0';
+        this.html.style.top = '0';
+        this.html.style.width = '65535px';
+        this.html.style.height = '65535px';
+    }
+
     /**
      * Resizes the window based on its initial dimensions and the aspect ratio derived from the passed parameters.
      * If the window was created with a width, that width is maintained and the height adjusted.
