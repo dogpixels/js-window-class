@@ -40,6 +40,9 @@ body.window-drag-active .window iframe {
     border: var(--win-border-width) solid var(--win-border-color);
     background: var(--win-background);
 }
+.window.transparent {
+    background: transparent;
+}
 .window-title-bar {
     height: var(--win-title-height);
     background: var(--win-title-bar-color);

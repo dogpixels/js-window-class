@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.8
+ * @version 1.10
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -134,7 +134,7 @@ class Window {
             this.#initialDim.h = Math.max(options.height, this.#css.titleHeight);
         
         // merge passed options, of which some are optional, with sensible defaults
-        const defaults = { title: 'loading…', width: 640, height: 480, x: 20, y: 20 };
+        const defaults = { title: 'loading…',  classList: [], width: 640, height: 480, x: 20, y: 20};
         options = { ...defaults, ...options, ...{url: Window.registry[key]} };
 
         if (options.private?.hasOwnProperty('restoredFromSaveData'))
@@ -157,6 +157,10 @@ class Window {
         // window element
         this.html = document.createElement('article');
         this.html.classList.add('window');
+        if (options.classList.length > 0) {
+            console.log('adding classes', ...options.classList);
+            this.html.classList.add(...options.classList);
+        }
         this.html.style.cssText = `width:${options.width}px;height:${options.height}px;left:${options.x}px;top:${options.y}px;z-index:${Window.topZIndex++};`;
         this.html.addEventListener('mousedown', () => {
             this.html.style.zIndex = Window.topZIndex++;
@@ -705,6 +709,9 @@ window.addEventListener('message', (e) => {
         case 'resize':
             Window.findByUrl(e.source.location.href)?.resizeToContent(e.data.width, e.data.height);
             break;
+
+        case 'maximize':
+            Window.findByUrl(e.source.location.href)?.maximize();
 
         case 'center':
             Window.findByUrl(e.source.location.href)?.centerToDesktop();
