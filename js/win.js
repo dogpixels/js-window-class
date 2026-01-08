@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.10
+ * @version 1.11
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -10,7 +10,7 @@
  * Show a button in the title bar that opens the target iframe url in a new tab. Good for refreshing contents during development.
  * @type {boolean}
  */
-const OPEN_IN_NEW_TAB_BUTTON = false;
+const OPEN_IN_NEW_TAB_BUTTON = true;
 
 /**
  * On screens lower than this width, x, y and width declarations will be ignored and the window stretched across the full width.
@@ -134,7 +134,7 @@ class Window {
             this.#initialDim.h = Math.max(options.height, this.#css.titleHeight);
         
         // merge passed options, of which some are optional, with sensible defaults
-        const defaults = { title: 'loading…',  classList: [], width: 640, height: 480, x: 20, y: 20};
+        const defaults = { title: 'loading…', width: 640, height: 480, x: 20, y: 20};
         options = { ...defaults, ...options, ...{url: Window.registry[key]} };
 
         if (options.private?.hasOwnProperty('restoredFromSaveData'))
@@ -157,10 +157,6 @@ class Window {
         // window element
         this.html = document.createElement('article');
         this.html.classList.add('window');
-        if (options.classList.length > 0) {
-            console.log('adding classes', ...options.classList);
-            this.html.classList.add(...options.classList);
-        }
         this.html.style.cssText = `width:${options.width}px;height:${options.height}px;left:${options.x}px;top:${options.y}px;z-index:${Window.topZIndex++};`;
         this.html.addEventListener('mousedown', () => {
             this.html.style.zIndex = Window.topZIndex++;
@@ -408,6 +404,7 @@ class Window {
      * @param {number} contentH 
      */
     resizeToContent(contentW, contentH) {
+        console.debug(`resizeToContent(${contentW}, ${contentH});`);
         // prevent further resizing on windows restored from Save Data (location hash)
         if (this.#restoredFromSaveData)
             return;
@@ -424,7 +421,7 @@ class Window {
         const posX = parseInt(this.html.style.left);
         const posY = parseInt(this.html.style.top);
 
-        // user provided both dimensions, adjust to the larger result
+        // window was initially created with both dimensions, adjust to the larger result
         if (this.#initialDim.w && this.#initialDim.h) {
             const customH = (this.#initialDim.w * contentH/contentW);
             const customW = (this.#initialDim.h * contentW/contentH);
@@ -433,19 +430,25 @@ class Window {
             currentW = area_cH > area_cW ? this.#initialDim.w : customW;
             currentH = area_cH > area_cW ? customH : this.#initialDim.h;
         }
-        // user provided width, adjust height
+        // window initialized only with width, adjust height
         else if (this.#initialDim.w) {
             currentW = this.#initialDim.w;
             currentH = currentW * contentH/contentW;
         }
-        // user provided height, adjust width
+        // window initialized only with height, adjust width
         else if (this.#initialDim.h) {
             currentH = this.#initialDim.h;
             currentW = currentH * contentW/contentH;
         }
+        // no initial dimension provided, adjust fully to content
+        else {
+            currentH = contentH;
+            currentW = contentW;
+        }
 
         // currentW exceeds desktop width, adjust both to fit
         if (currentW + addW + posX > this.#desktopRect.w) {
+            // console.debug(`exceed width: currentW ${currentW} + addW ${addW} + posX ${posX} > desktopRect.w ${this.#desktopRect.w}`);
             let oldW = currentW;
             currentW = this.#desktopRect.w - addW - posX;
             currentH = currentW * currentH/oldW;
@@ -453,6 +456,7 @@ class Window {
 
         // currentH exceeds desktop height, adjust both to fit
         if (currentH + addH + posY > this.#desktopRect.h) {
+            // console.debug(`exceed height: currentH ${currentH} + addH ${addH} + posY ${posY} > desktopRect.h ${this.#desktopRect.h}`);
             let oldH = currentH;
             currentH = this.#desktopRect.h - addH - posY;
             currentW = currentH*currentW/oldH;

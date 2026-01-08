@@ -6,8 +6,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <style>
-            body {margin: 0; padding: 0; background: transparent}
-            html[data-loaded] > body {background: #000}
+            body {margin: 0; padding: 0; background: #000}
             img {display: block; max-width: 100vw; max-height: 100vh; margin: 0 auto}
         </style>
     </head>
@@ -16,30 +15,27 @@
             const basepath = '../';
             if (window.location.hash) {
                 const imgFileName = window.location.hash.substring(1);
-                let img = document.createElement('img');
+                const img = document.createElement('img');
                 document.body.appendChild(img);
                 img.src = basepath + imgFileName;
                 document.title = imgFileName.split('/').reverse()[0];
 
-                // request window to adjust size to image size
-                img.onload = () => {
-                    parent.postMessage({
-                        action: 'maximize'
-                    }, '*');
+                const intId = setInterval(() => {
+                    if (img.naturalWidth) {
+                        clearInterval(intId);
+                        
+                        parent.postMessage({
+                            action: 'resize',
+                            // Math.max(x, naturalX) supposed to prevent overstretching img
+                            width: Math.max(img.width, img.naturalWidth),
+                            height: Math.max(img.height, img.naturalHeight)
+                        }, '*');
 
-                    parent.postMessage({
-                        action: 'resize',
-                        // Math.min(x, naturalX) supposed to prevent overstretching img
-                        width: Math.min(img.width, img.naturalWidth),
-                        height: Math.min(img.height, img.naturalHeight)
-                    }, '*');
-
-                    parent.postMessage({
-                        action: 'center'
-                    }, '*');
-
-                    document.querySelector('html').dataset.loaded = true;
-                };
+                        parent.postMessage({
+                            action: 'center'
+                        }, '*');
+                    }
+                }, 10);
             }
             else {
                 document.body.innerText = '(╯°□°）╯︵ ┻━┻';
