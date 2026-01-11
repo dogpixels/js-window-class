@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.11
+ * @version 1.12
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -404,7 +404,6 @@ class Window {
      * @param {number} contentH 
      */
     resizeToContent(contentW, contentH) {
-        console.debug(`resizeToContent(${contentW}, ${contentH});`);
         // prevent further resizing on windows restored from Save Data (location hash)
         if (this.#restoredFromSaveData)
             return;
@@ -589,6 +588,29 @@ class Window {
     }
 
     /**
+     * Returns the highest (by z-index) window whose iframe matches the specified id/key, or null.
+     * 
+     * @param {string} key The id (aka key) to look for.
+     * @returns {Window|null} The window instance with the matching iframe and highest z-index, or null if no matching window is found.
+     */
+    static findByID(key) {
+        let ret = null;
+        let topZ = 0;
+
+        for (const win of Window.windowList) {
+            if (win.key === key) {
+                const z = parseInt(win.html.style.zIndex) || 0;
+                if (z >= topZ) {
+                    topZ = z;
+                    ret = win;
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    /**
      * Returns the highest (by z-index) window whose iframe matches the specified URL, or null.
      * 
      * @param {string} url The complete URL to match against iframe sources.
@@ -596,14 +618,14 @@ class Window {
      */
     static findByUrl(url) {
         let ret = null;
-        let topz = 0;
+        let topZ = 0;
 
         for (const win of Window.windowList) {
             const iframe = win.html.getElementsByTagName('iframe')[0];
             if (iframe && iframe.src === url) {
                 const z = parseInt(win.html.style.zIndex) || 0;
-                if (z > topz) {
-                    topz = z;
+                if (z >= topZ) {
+                    topZ = z;
                     ret = win;
                 }
             }
