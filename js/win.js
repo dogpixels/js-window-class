@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.12
+ * @version 1.13
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -476,6 +476,10 @@ class Window {
      * Centers the window onto the desktop.
      */
     centerToDesktop() {
+        // prevent further resizing on windows restored from Save Data (location hash)
+        if (this.#restoredFromSaveData)
+            return;
+
         const centerX = Math.max(0, (this.#desktopRect.w - parseInt(this.html.style.width)) / 2);
         const centerY = Math.max(0, (this.#desktopRect.h - parseInt(this.html.style.height)) / 2);
         this.html.style.left = `${centerX}px`;
