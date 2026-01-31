@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.16
+ * @version 1.17
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -585,7 +585,7 @@ class Window {
         }
 
         if (!window)
-            return {x: offsetX, y: offsetY};
+            return {x: offsetX, y: offsetX};
 
         const ret = {
             x: parseInt(window.html.style.left) + offsetX,
