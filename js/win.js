@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.15
+ * @version 1.16
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -149,7 +149,7 @@ class Window {
             this.#restoredFromSaveData = options.private.restoredFromSaveData;
         }
         // add cascading x and y coordinates
-        else if (!options.x && !options.y) {
+        else if (options.x === undefined && options.y === undefined) {
             options = {...options, ...this.#getCascadingPos(options.width, options.height)};
         }
 
