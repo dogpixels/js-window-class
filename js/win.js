@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.13
+ * @version 1.14
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -75,14 +75,14 @@ class Window {
     /** @type {ElementType.iframe} the iframe element at the window's heart */
     #iframe = null;
 
-    /** @type {Object} this.html parent dimensions and position relative to viewport, updated by updateDesktopRect() */
-    #desktopRect = {x: 0, y: 0, w: 0, h: 0};
-
     /** @type {object} width and hight values initially passed on window creation, if provided */
     #initialDim = {w: null, h: null};
     
     /** @type {boolean} true if window had been restored from Save Data (location hash), false otherwise */
     #restoredFromSaveData = false;
+
+    /** @type {Object} this.html parent dimensions and position relative to viewport, updated by updateDesktopRect() */
+    static desktopRect = {x: 0, y: 0, w: 0, h: 0};
 
     /** @type {Object}  */
     static mouseEvent = { target: null, type: null, direction: null }
@@ -134,24 +134,24 @@ class Window {
             this.#initialDim.h = Math.max(options.height, this.#css.titleHeight);
         
         // merge passed options, of which some are optional, with sensible defaults
-        const defaults = { title: 'loading…', width: 640, height: 480, x: 20, y: 20};
+        const defaults = {title: 'loading…', width: 640, height: 480};
         options = { ...defaults, ...options, ...{url: Window.registry[key]} };
 
-        if (options.private?.hasOwnProperty('restoredFromSaveData'))
+        // override x, y and width to fullscreen on mobile screens
+        if (FULLSCREEN_THRESHOLD > 0 && parentElement.clientWidth <= FULLSCREEN_THRESHOLD) {
+            options.x = 0;
+            options.y = 0;
+            options.width = 65535;
+            options.height = 65535;
+        }
+        // restored window; use the dimensions it comes with
+        else if (options.private?.hasOwnProperty('restoredFromSaveData')) {
             this.#restoredFromSaveData = options.private.restoredFromSaveData;
 
         // retrieve target iframe url for this window from a static registry (this is for security reasons)
         if (options.url === undefined) {
             console.warn(`Could not create window with key '${key}' because that key is missing in '${WINDOWS_REGISTRY_FILE}'.`,options.url);
             options.url = WINDOWS_404_ERROR_FILE;
-        }
-
-        // override x, y and width to fullscreen on mobile screens
-        if (!this.#restoredFromSaveData && FULLSCREEN_THRESHOLD > 0 && parentElement.clientWidth <= FULLSCREEN_THRESHOLD) {
-            options.x = 0;
-            options.y = 0;
-            options.width = 65535;
-            options.height = 65535;
         }
 
         // window element
@@ -162,7 +162,7 @@ class Window {
             this.html.style.zIndex = Window.topZIndex++;
         });
         parentElement.appendChild(this.html);
-        this.updateDesktopRect();
+        Window.updateDesktopRect();
         this.#clampToDesktop();
 
         // title bar
@@ -172,10 +172,6 @@ class Window {
         this.#titleBar.addEventListener('mousedown', (e) => {
             const rect = this.html.getBoundingClientRect();
             this.#mdown = {
-                // mx: e.clientX,               // irrelevant for pos case
-                // my: e.clientY,               // irrelevant for pos case
-                // w: this.html.offsetWidth,    // irrelevant for pos case
-                // h: this.html.offsetHeight,   // irrelevant for pos case
                 x: e.clientX - rect.left,  // mouseX - windowX = offset from left edge
                 y: e.clientY - rect.top    // mouseY - windowY = offset from top edge
             };
@@ -252,10 +248,10 @@ class Window {
      * Save current parent container element ("desktop") corner coordinates within viewport.
      * This is to compensate in case the "desktop" has been repositioned e.g. due to other elements in the viewport.
      */
-    updateDesktopRect() {
-        const desktop = this.html.parentElement;
+    static updateDesktopRect() {
+        const desktop = document.getElementById(WINDOWS_PARENT_ELEMENT_ID);
         const rect = desktop.getBoundingClientRect();
-        this.#desktopRect = {
+        Window.desktopRect = {
             x: rect.left + window.scrollX,
             y: rect.top + window.scrollY,
             w: desktop.clientWidth,
@@ -271,11 +267,11 @@ class Window {
      * @param {number} my mouse position Y
      */
     setPos(mx, my) {
-        const relX = mx - this.#desktopRect.x;
-        const relY = my - this.#desktopRect.y;
+        const relX = mx - Window.desktopRect.x;
+        const relY = my - Window.desktopRect.y;
 
-        const maxX = this.#desktopRect.w - this.html.offsetWidth;
-        const maxY = this.#desktopRect.h - this.html.offsetHeight;
+        const maxX = Window.desktopRect.w - this.html.offsetWidth;
+        const maxY = Window.desktopRect.h - this.html.offsetHeight;
 
         let x = Math.max(0, Math.min(relX - this.#mdown.x, maxX));
         let y = Math.max(0, Math.min(relY - this.#mdown.y, maxY));
@@ -352,28 +348,28 @@ class Window {
             h -= shift;
             if (h < minHeight) h = minHeight;
         }
-        if (x + w > this.#desktopRect.w) { // right
-            const shift = x + w - this.#desktopRect.w;
+        if (x + w > Window.desktopRect.w) { // right
+            const shift = x + w - Window.desktopRect.w;
             w -= shift;
             if (w < minWidth) {
                 w = minWidth;
-                x = this.#desktopRect.w - w;
+                x = Window.desktopRect.w - w;
             }
         }
-        if (y + h > this.#desktopRect.h) { // bottom
-            const shift = y + h - this.#desktopRect.h;
+        if (y + h > Window.desktopRect.h) { // bottom
+            const shift = y + h - Window.desktopRect.h;
             h -= shift;
             if (h < minHeight) {
                 h = minHeight;
-                y = this.#desktopRect.h - h;
+                y = Window.desktopRect.h - h;
             }
         }
 
         // clamp to desktop / minimums
-        x = Math.max(0, Math.min(x, this.#desktopRect.w - minWidth));
-        y = Math.max(0, Math.min(y, this.#desktopRect.h - minHeight));
-        w = Math.max(minWidth, Math.min(w, this.#desktopRect.w - x));
-        h = Math.max(minHeight, Math.min(h, this.#desktopRect.h - y));
+        x = Math.max(0, Math.min(x, Window.desktopRect.w - minWidth));
+        y = Math.max(0, Math.min(y, Window.desktopRect.h - minHeight));
+        w = Math.max(minWidth, Math.min(w, Window.desktopRect.w - x));
+        h = Math.max(minHeight, Math.min(h, Window.desktopRect.h - y));
 
         // apply style
         this.html.style.left = `${x}px`;
@@ -446,18 +442,18 @@ class Window {
         }
 
         // currentW exceeds desktop width, adjust both to fit
-        if (currentW + addW + posX > this.#desktopRect.w) {
-            // console.debug(`exceed width: currentW ${currentW} + addW ${addW} + posX ${posX} > desktopRect.w ${this.#desktopRect.w}`);
+        if (currentW + addW + posX > Window.desktopRect.w) {
+            // console.debug(`exceed width: currentW ${currentW} + addW ${addW} + posX ${posX} > desktopRect.w ${Window.desktopRect.w}`);
             let oldW = currentW;
-            currentW = this.#desktopRect.w - addW - posX;
+            currentW = Window.desktopRect.w - addW - posX;
             currentH = currentW * currentH/oldW;
         }
 
         // currentH exceeds desktop height, adjust both to fit
-        if (currentH + addH + posY > this.#desktopRect.h) {
-            // console.debug(`exceed height: currentH ${currentH} + addH ${addH} + posY ${posY} > desktopRect.h ${this.#desktopRect.h}`);
+        if (currentH + addH + posY > Window.desktopRect.h) {
+            // console.debug(`exceed height: currentH ${currentH} + addH ${addH} + posY ${posY} > desktopRect.h ${Window.desktopRect.h}`);
             let oldH = currentH;
-            currentH = this.#desktopRect.h - addH - posY;
+            currentH = Window.desktopRect.h - addH - posY;
             currentW = currentH*currentW/oldH;
         }
         
@@ -480,8 +476,8 @@ class Window {
         if (this.#restoredFromSaveData)
             return;
 
-        const centerX = Math.max(0, (this.#desktopRect.w - parseInt(this.html.style.width)) / 2);
-        const centerY = Math.max(0, (this.#desktopRect.h - parseInt(this.html.style.height)) / 2);
+        const centerX = Math.max(0, (Window.desktopRect.w - parseInt(this.html.style.width)) / 2);
+        const centerY = Math.max(0, (Window.desktopRect.h - parseInt(this.html.style.height)) / 2);
         this.html.style.left = `${centerX}px`;
         this.html.style.top = `${centerY}px`;
     }
@@ -492,8 +488,8 @@ class Window {
      * or take up the entire available width (w=9999) or height (h=9999).
      */
     #clampToDesktop() {
-        const desktopW = this.#desktopRect.w;
-        const desktopH = this.#desktopRect.h;
+        const desktopW = Window.desktopRect.w;
+        const desktopH = Window.desktopRect.h;
 
         const minWidth = this.#css.minWinWidth;
         const minHeight = this.#css.titleHeight + 2 * this.#css.borderWidth;
@@ -569,7 +565,7 @@ class Window {
     static setMouseEvent(target, type = null, direction = null) {
         if (target) {
             document.body.classList.add('window-drag-active');
-            target.updateDesktopRect();
+            Window.updateDesktopRect();
         } else {
             document.body.classList.remove('window-drag-active');
         }
@@ -708,9 +704,7 @@ document.addEventListener('mousemove', (e) => {
 
 // Update desktop rect on scroll/resize
 window.addEventListener('resize', () => {
-    Window.windowList.forEach(win => {
-        win.updateDesktopRect();
-    });
+    Window.updateDesktopRect();
 });
 
 window.addEventListener('message', (e) => {
