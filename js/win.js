@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.14
+ * @version 1.15
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -147,6 +147,11 @@ class Window {
         // restored window; use the dimensions it comes with
         else if (options.private?.hasOwnProperty('restoredFromSaveData')) {
             this.#restoredFromSaveData = options.private.restoredFromSaveData;
+        }
+        // add cascading x and y coordinates
+        else if (!options.x && !options.y) {
+            options = {...options, ...this.#getCascadingPos(options.width, options.height)};
+        }
 
         // retrieve target iframe url for this window from a static registry (this is for security reasons)
         if (options.url === undefined) {
@@ -544,6 +549,53 @@ class Window {
         this.html.style.top = `${y}px`;
         this.html.style.width = `${w}px`;
         this.html.style.height = `${h}px`;
+    }
+
+    /**
+     * Generate window creation coordinates based on TODO.
+     * @param {number} width width of the new window (to prevent clamping to right desktop edge)
+     * @param {number} height height of the new window (to prevent clamping to bottom desktop edge)
+     * @returns object containing x and y, each int
+     */
+    #getCascadingPos(width, height) {
+        const offsetX = this.#css.borderWidth + 8;
+        const offsetY = this.#css.titleHeight + this.#css.borderWidth + 8;
+
+        // get the z-wise topmost window that isn't clamped to the bottom or right edge
+        let window = null;
+        let topZ = 0;
+        for (const win of Window.windowList) {
+            const winX = parseInt(win.html.style.left);
+            const winY = parseInt(win.html.style.top);
+            const winZ = parseInt(win.html.style.zIndex);
+
+            if ( // skip this window if it's too close to right or bottom
+                winX + width + offsetX >= Window.desktopRect.w
+             || winY + height + offsetY >= Window.desktopRect.h
+            ) {
+                continue;
+            }
+
+            // console.debug(`looking at ${win.key} with z: ${winZ}`);
+            const z = winZ || 0;
+            if (z >= topZ) {
+                topZ = z;
+                window = win;
+            }
+        }
+
+        if (!window)
+            return {x: offsetX, y: offsetY};
+
+        const ret = {
+            x: parseInt(window.html.style.left) + offsetX,
+            y: parseInt(window.html.style.top) + offsetY
+        };
+        
+        // console.debug(`result: '${window.key}' with topZ = ${topZ}`, window);
+        // console.debug(`return:`, ret);
+
+        return ret;
     }
 
     /**
