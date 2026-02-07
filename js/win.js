@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.17
+ * @version 1.18
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -38,6 +38,11 @@ const WINDOWS_REGISTRY_FILE = 'config/win-urls.json';
  * @type {string}
  */
 const WINDOWS_404_ERROR_FILE = 'pages/win-404.html';
+
+/**
+ * Draws a rectangle that goes from mouse position to creation position on window launch.
+ */
+const WINDOWS_ANIMATE_LAUNCH = true;
 
 /**
  * @event windows:initialized
@@ -95,6 +100,9 @@ class Window {
     
     /** @type {string} the last saveData written to window history, to check against for changes */
     static lastSaveData = '';
+
+    /** @type {Object} mouse position tracking, used e.g. for launch rect animation */
+    static mousePos = {x: 0, y: 0};
 
     /**
      * 
@@ -247,7 +255,36 @@ class Window {
         });
 
         Window.windowList.push(this);
+
+        // opening animation
+        if (WINDOWS_ANIMATE_LAUNCH && !this.#restoredFromSaveData) {
+            let rect = document.createElement("div");
+            rect.classList.add('win-launch-anim-rect');
+            parentElement.appendChild(rect);
+            rect.animate(
+                [
+                    {
+                        transform: `translate(${Window.mousePos.x}px, ${Window.mousePos.y}px)`,
+                        width: '32px',
+                        height: '32px'
+                    },
+                    {
+                        transform: `translate(${options.x}px, ${options.y}px)`,
+                        width:  `${options.width}px`,
+                        height: `${options.height}px`
+                    }
+                ], 
+                {
+                    duration: 150
+                }
+            );
+
+            setTimeout(() => {
+                rect.remove();
+            }, 150);
+        }
     }
+
 
     /**
      * Save current parent container element ("desktop") corner coordinates within viewport.
@@ -752,6 +789,8 @@ document.addEventListener('mousemove', (e) => {
     else if (Window.mouseEvent.type == 'dim' && e.buttons != 0) {
         Window.mouseEvent.target.setDim(e.clientX, e.clientY);
     }
+    else if (WINDOWS_ANIMATE_LAUNCH)
+        Window.mousePos = {x: e.clientX, y: e.clientY};
 });
 
 // Update desktop rect on scroll/resize
