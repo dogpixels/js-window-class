@@ -98,10 +98,6 @@ body.window-drag-active .window iframe {
     bottom: calc(var(--win-border-width) * -1);
     left: calc(var(--win-border-width) * -1);
 }
-.win-launch-anim-rect {
-    position: absolute;
-    border: 3px solid;
-}
 .window-resize-handler.n {
     left: 0;
     bottom: unset;

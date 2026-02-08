@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.18
+ * @version 1.19
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -258,10 +258,7 @@ class Window {
 
         // opening animation
         if (WINDOWS_ANIMATE_LAUNCH && !this.#restoredFromSaveData) {
-            let rect = document.createElement("div");
-            rect.classList.add('win-launch-anim-rect');
-            parentElement.appendChild(rect);
-            rect.animate(
+            this.html.animate(
                 [
                     {
                         transform: `translate(${Window.mousePos.x}px, ${Window.mousePos.y}px)`,
@@ -278,10 +275,6 @@ class Window {
                     duration: 150
                 }
             );
-
-            setTimeout(() => {
-                rect.remove();
-            }, 150);
         }
     }
 
