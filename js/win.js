@@ -1,6 +1,6 @@
 /**
  * @fileoverview Flam's Window Class
- * @version 1.19
+ * @version 1.20
  * @author Flam <draconigen@dogpixels.net>
  * @license AGPL-3.0
  * Provided "as is", without warranty of any kind.
@@ -176,7 +176,7 @@ class Window {
         });
         parentElement.appendChild(this.html);
         Window.updateDesktopRect();
-        this.#clampToDesktop();
+        this.clampToDesktop();
 
         // title bar
         this.#titleBar = document.createElement('div');
@@ -522,7 +522,7 @@ class Window {
      * This enables the user to e.g. command windows to always take up the right side (x=9999)
      * or take up the entire available width (w=9999) or height (h=9999).
      */
-    #clampToDesktop() {
+    clampToDesktop() {
         const desktopW = Window.desktopRect.w;
         const desktopH = Window.desktopRect.h;
 
@@ -789,6 +789,9 @@ document.addEventListener('mousemove', (e) => {
 // Update desktop rect on scroll/resize
 window.addEventListener('resize', () => {
     Window.updateDesktopRect();
+    for (const win of Window.windowList) {
+        win.clampToDesktop();
+    }
 });
 
 window.addEventListener('message', (e) => {
