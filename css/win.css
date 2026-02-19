@@ -3,6 +3,7 @@
     --win-title-bar-color: #000;
     --win-title-bar-text-color: #fff;
     --win-background: #ccc;
+    --win-shadow: 0 3px 10px 0 rgba(0,0,0,0.2);
     /* the following variables are also read by window.js */
     --win-min-width: 200px;
     --win-title-height: 1.33rem;
@@ -39,6 +40,7 @@ body.window-drag-active .window iframe {
     min-height: calc(var(--win-title-height) + var(--win-border-width));
     border: var(--win-border-width) solid var(--win-border-color);
     background: var(--win-background);
+    box-shadow: var(--win-shadow);
 }
 .window-title-bar {
     height: var(--win-title-height);
