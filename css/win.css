@@ -45,6 +45,7 @@ body.window-drag-active .window iframe {
 .window-title-bar {
     height: var(--win-title-height);
     background: var(--win-title-bar-color);
+    border-bottom: var(--win-border-width) solid var(--win-border-color);
 }
 .window-title-bar h1 {
     position: relative;
