@@ -267,8 +267,8 @@ class Window {
                     },
                     {
                         transform: `translate(${options.x}px, ${options.y}px)`,
-                        width:  `${options.width}px`,
-                        height: `${options.height}px`
+                        width:  `${options.width || 0}px`,
+                        height: `${options.height || 0}px`
                     }
                 ], 
                 {
