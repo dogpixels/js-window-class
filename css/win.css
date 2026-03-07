@@ -1,6 +1,6 @@
 :root {
-    --win-border-color: #000;
-    --win-title-bar-color: #000;
+    --win-border-color: #000042;
+    --win-title-bar-color: linear-gradient(90deg, #000, #000042);
     --win-title-bar-text-color: #fff;
     --win-background: #ccc;
     --win-shadow: 0 3px 10px 0 rgba(0,0,0,0.2);
